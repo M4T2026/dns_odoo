@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_dns_pos_promotion_search" model="ir.ui.view">
+        <field name="name">dns.pos.promotion.search</field>
+        <field name="model">dns.pos.promotion</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="offer_type"/>
+                <field name="coupon_code"/>
+                <field name="pos_config_ids"/>
+                <field name="store_group_ids" groups="dns_pos_promotions.group_dns_promotion_manager"/>
+                <filter name="active_promotions" string="Active" domain="[('state','=','active')]"/>
+                <filter name="scheduled_promotions" string="Scheduled" domain="[('state','=','scheduled')]"/>
+                <filter name="conflicted_promotions" string="Conflicts" domain="[('state','=','conflict')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_state" string="State" context="{'group_by':'state'}"/>
+                    <filter name="group_by_offer_type" string="Offer Type" context="{'group_by':'offer_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_dns_pos_promotion_tree" model="ir.ui.view">
+        <field name="name">dns.pos.promotion.tree</field>
+        <field name="model">dns.pos.promotion</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="state == 'conflict'" decoration-success="state == 'active'" decoration-muted="state in ('ended','cancelled','archived')">
+                <field name="priority" widget="handle"/>
+                <field name="name"/>
+                <field name="offer_type"/>
+                <field name="state" widget="badge"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="product_count"/>
+                <field name="store_count"/>
+                <field name="conflict_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_dns_pos_promotion_form" model="ir.ui.view">
+        <field name="name">dns.pos.promotion.form</field>
+        <field name="model">dns.pos.promotion</field>
+        <field name="arch" type="xml">
+            <form string="Odoo Promotion">
+                <header>
+                    <button name="action_validate" string="Validate &amp; Activate" type="object" class="oe_highlight" invisible="state in ('cancelled','archived')" groups="dns_pos_promotions.group_dns_promotion_manager"/>
+                    <button name="action_clone" string="Clone" type="object" groups="dns_pos_promotions.group_dns_promotion_manager"/>
+                    <button name="action_import_products_csv" string="Import Products" type="object" groups="dns_pos_promotions.group_dns_promotion_manager"/>
+                    <button name="action_export_products_csv" string="Export Products" type="object" groups="dns_pos_promotions.group_dns_promotion_manager"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state in ('cancelled','archived','ended')" groups="dns_pos_promotions.group_dns_promotion_manager"/>
+                    <button name="action_archive" string="Archive" type="object" invisible="state == 'archived'" groups="dns_pos_promotions.group_dns_promotion_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,conflict,scheduled,active,ended,cancelled,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-cubes" type="object" name="action_view_scope">
+                            <field name="product_count" widget="statinfo" string="Products"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-warning" type="object" name="action_view_conflicts" invisible="conflict_count == 0">
+                            <field name="conflict_count" widget="statinfo" string="Conflicts"/>
+                        </button>
+                    </div>
+                    <div class="oe_title"><label for="name"/><h1><field name="name" placeholder="e.g. Winter mix-and-match"/></h1></div>
+                    <group>
+                        <group string="Basics">
+                            <field name="offer_type"/>
+                            <field name="priority"/>
+                            <field name="automatic" invisible="offer_type == 'coupon'"/>
+                            <field name="coupon_code" invisible="offer_type != 'coupon'" required="offer_type == 'coupon'"/>
+                        </group>
+                        <group string="Schedule">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="timezone"/>
+                            <field name="version" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Stores">
+                        <field name="all_stores"/>
+                        <field name="store_group_ids" widget="many2many_tags" invisible="all_stores" groups="dns_pos_promotions.group_dns_promotion_manager"/>
+                        <field name="pos_config_ids" widget="many2many_tags" invisible="all_stores"/>
+                    </group>
+                    <notebook>
+                        <page string="Product Selectors" invisible="offer_type == 'multi_group'">
+                            <field name="selector_ids" context="{'default_promotion_id': id}">
+                                <tree editable="bottom"><field name="sequence" widget="handle"/><field name="name"/><field name="all_products"/><field name="is_manual" optional="hide"/><field name="product_ids" widget="many2many_tags" optional="show"/><field name="category_ids" widget="many2many_tags" optional="show"/><field name="resolved_count"/></tree>
+                                <form><group><field name="name"/><field name="all_products"/><field name="is_manual"/></group><group string="Match all selected filters"><field name="product_ids" widget="many2many_tags"/><field name="category_ids" widget="many2many_tags"/><field name="tag_ids" widget="many2many_tags"/><field name="season_ids" widget="many2many_tags"/><field name="size_ids" widget="many2many_tags"/><field name="colour"/><field name="vendor_ids" widget="many2many_tags"/><field name="barcode_terms" placeholder="Scan or enter one barcode per line"/></group></form>
+                            </field>
+                            <group string="Exclusions">
+                                <field name="excluded_product_ids" widget="many2many_tags" nolabel="1"
+                                       options="{'no_create': True}"
+                                       placeholder="Products to drop from this promotion even when a selector resolves them"/>
+                            </group>
+                        </page>
+                        <page string="Assortment Groups" invisible="offer_type != 'multi_group'">
+                            <field name="assortment_group_ids" context="{'default_promotion_id': id}">
+                                <tree editable="bottom"><field name="sequence" widget="handle"/><field name="name"/><field name="required_qty"/></tree>
+                                <form><group><field name="name"/><field name="required_qty"/></group><field name="selector_ids"><tree editable="bottom"><field name="name"/><field name="all_products"/><field name="product_ids" widget="many2many_tags"/><field name="category_ids" widget="many2many_tags"/></tree></field></form>
+                            </field>
+                        </page>
+                        <page string="Reward">
+                            <group>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="percent_discount" invisible="offer_type not in ('product_percent','order_percent','coupon')"/>
+                                <field name="fixed_discount" invisible="offer_type not in ('product_fixed','order_fixed','coupon')"/>
+                                <field name="required_qty" invisible="offer_type not in ('single_bundle','buy_x_get_y','mix_match')"/>
+                                <field name="bundle_total" invisible="offer_type not in ('single_bundle','mix_match','multi_group')"/>
+                                <field name="bundle_unit_price" invisible="offer_type != 'single_bundle'"/>
+                                <field name="reward_product_id" invisible="offer_type != 'buy_x_get_y'"/>
+                                <field name="reward_qty" invisible="offer_type != 'buy_x_get_y'"/>
+                                <field name="minimum_order_amount" invisible="offer_type not in ('order_percent','order_fixed','coupon')"/>
+                            </group>
+                        </page>
+                        <page string="Conflicts" invisible="conflict_count == 0">
+                            <field name="conflict_ids" readonly="1"><tree><field name="product_id"/><field name="barcode"/><field name="store_id"/><field name="conflicting_promotion_id"/><field name="overlap_start"/><field name="overlap_end"/></tree></field>
+                        </page>
+                        <page string="Timeline"><field name="audit_ids" readonly="1"><tree><field name="create_date"/><field name="event_type"/><field name="user_id"/><field name="message"/></tree></field></page>
+                    </notebook>
+                </sheet>
+                <!-- Odoo 17 renders the chatter from div.oe_chatter; <chatter/> is Odoo 18 syntax
+                     and silently renders nothing here. -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="res_config_settings_view_form_dns_promotions" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.dns.promotions</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='pos_interface_section']" position="inside">
+                <setting id="dns_promotions_setting" title="Evaluate DNS promotions on this Point of Sale.">
+                    <field name="dns_promotions_enabled"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_dns_store_group_tree" model="ir.ui.view"><field name="name">dns.promotion.store.group.tree</field><field name="model">dns.promotion.store.group</field><field name="arch" type="xml"><tree><field name="name"/><field name="warehouse_ids" widget="many2many_tags"/><field name="pos_config_ids" widget="many2many_tags"/><field name="store_count"/></tree></field></record>
+    <record id="view_dns_store_group_form" model="ir.ui.view"><field name="name">dns.promotion.store.group.form</field><field name="model">dns.promotion.store.group</field><field name="arch" type="xml"><form><sheet><group><field name="name"/><field name="active"/></group><group><field name="warehouse_ids" widget="many2many_tags"/><field name="pos_config_ids" widget="many2many_tags"/></group></sheet></form></field></record>
+    <record id="view_dns_scope_tree" model="ir.ui.view"><field name="name">dns.promotion.product.scope.tree</field><field name="model">dns.promotion.product.scope</field><field name="arch" type="xml"><tree create="false" delete="false"><field name="promotion_id"/><field name="group_id"/><field name="product_id"/><field name="barcode"/></tree></field></record>
+    <record id="view_dns_conflict_tree" model="ir.ui.view"><field name="name">dns.promotion.conflict.tree</field><field name="model">dns.promotion.conflict</field><field name="arch" type="xml"><tree create="false" delete="false"><field name="promotion_id"/><field name="product_id"/><field name="barcode"/><field name="store_id"/><field name="conflicting_promotion_id"/><field name="overlap_start"/><field name="overlap_end"/></tree></field></record>
+
+    <record id="action_dns_pos_promotion" model="ir.actions.act_window"><field name="name">Promotions</field><field name="res_model">dns.pos.promotion</field><field name="view_mode">tree,form</field><field name="search_view_id" ref="view_dns_pos_promotion_search"/></record>
+    <record id="action_dns_store_group" model="ir.actions.act_window"><field name="name">Store Groups</field><field name="res_model">dns.promotion.store.group</field><field name="view_mode">tree,form</field></record>
+    <record id="action_dns_promotion_scope" model="ir.actions.act_window"><field name="name">Resolved Products</field><field name="res_model">dns.promotion.product.scope</field><field name="view_mode">tree</field><field name="domain">[('promotion_id','=',active_id)]</field></record>
+    <record id="action_dns_promotion_conflict" model="ir.actions.act_window"><field name="name">Promotion Conflicts</field><field name="res_model">dns.promotion.conflict</field><field name="view_mode">tree</field><field name="domain">[('promotion_id','=',active_id)]</field></record>
+</odoo>

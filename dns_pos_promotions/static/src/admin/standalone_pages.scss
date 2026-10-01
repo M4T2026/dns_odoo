@@ -1,0 +1,117 @@
+.dns-promo-standalone { overflow: hidden; }
+.dns-promo-standalone .o_main_navbar { display: none !important; }
+.dns-promo-standalone .o_web_client > .o_action_manager { top: 0 !important; }
+.dns-promo-standalone .o_action_manager,
+.dns-promo-standalone .o_action,
+.dns-promo-standalone .o_content { height: 100vh !important; }
+.dns-promo-standalone .dns-app { height: 100vh; overflow: auto; }
+.dns-detail-hero { display:flex; justify-content:space-between; align-items:end; background:#ffe600; border:2px solid #111; box-shadow:5px 5px #aaa; padding:28px; }
+.dns-detail-hero h2 { font:42px Impact,sans-serif; text-transform:uppercase; margin:12px 0 4px; }
+.dns-detail-hero > div:last-child { display:flex; gap:12px; }
+.dns-detail-hero button { padding:11px 15px; border:2px solid #111; background:#fff; font-weight:900; }
+.dns-back { display:block!important; border:0!important; background:transparent!important; padding:0 0 15px!important; }
+.dns-detail-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:20px 0; }
+.dns-detail-metrics article { background:#fff; border:2px solid #111; box-shadow:4px 4px #aaa; padding:16px; }
+.dns-detail-metrics span { display:block; font-size:10px; font-weight:900; color:#706b5c; }
+.dns-detail-metrics b { font:38px Impact,sans-serif; }
+.dns-detail-metrics b.small { font:700 12px Inter,sans-serif; line-height:1.7; }
+/* The PRODUCTS tile opens the resolved SKU list, so it reads as a control rather than a stat. */
+.dns-tile-action { cursor:pointer; position:relative; transition:transform .08s, box-shadow .08s; }
+.dns-tile-action:hover { background:#fffceb; transform:translate(-1px,-1px); box-shadow:6px 6px #aaa; }
+.dns-tile-action:active { transform:translate(1px,1px); box-shadow:2px 2px #aaa; }
+.dns-tile-action:focus-visible { outline:3px solid #cb0000; outline-offset:2px; }
+.dns-tile-hint { display:block; margin-top:6px; font-style:normal; font-size:10px; font-weight:900; letter-spacing:.09em; color:#cb0000; }
+
+.dns-product-panel { margin-bottom:20px; }
+.dns-product-panel .dns-table-wrap { border:0; box-shadow:none; }
+.dns-product-panel table { min-width:720px; }
+.dns-product-panel td { padding:10px 14px; border-bottom:1px solid #e2e2dc; }
+.dns-product-panel tbody tr:hover { background:#fffceb; }
+.dns-product-filter { display:flex; gap:12px; padding:16px 20px; border-bottom:2px solid #111; background:#f5f5f2; }
+.dns-product-filter label { flex:1; display:flex; align-items:center; gap:9px; background:#fff; border:2px solid #111; padding:9px 12px; }
+.dns-product-filter input { flex:1; border:0; outline:0; font-size:13px; background:transparent; }
+.dns-product-filter button { border:2px solid #111; background:#ffe600; font-weight:900; padding:9px 16px; letter-spacing:.06em; }
+/* Add/remove a single SKU without rebuilding the campaign's selectors. */
+.dns-product-add { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:end; padding:16px 20px; border-bottom:2px solid #111; background:#fffceb; }
+.dns-product-add label { font-size:12px; font-weight:900; }
+.dns-product-add textarea { display:block; width:100%; border:2px solid #111; padding:9px 12px; margin-top:6px; font-size:13px; resize:vertical; }
+.dns-product-add button { border:2px solid #111; background:#fff; font-weight:900; padding:11px 18px; letter-spacing:.06em; }
+.dns-product-add button[disabled] { opacity:.45; }
+.dns-product-add small { grid-column:1/-1; color:#706b5c; }
+/* `.dns-builder-card footer button` sets background:#fff and outranks `.dns-primary` on
+   specificity, but not its color:#fff - leaving Continue / Validate white on white and the
+   wizard apparently dead-ended. Restore the primary treatment inside the footer. */
+.dns-builder-card footer button.dns-primary { background:#cb0000; color:#fff; box-shadow:3px 3px #111; }
+.dns-builder-card footer button.dns-primary:hover { background:#a80000; }
+.dns-builder-card footer button[disabled] { opacity:.5; }
+
+/* What is still missing, on the Review step, instead of a bare "Odoo Server Error" on submit. */
+/* Specificity note: promotion_workspace.scss styles `.dns-review aside` as a calm yellow tip,
+   which outranks a bare class. Match its shape so a blocker does not read as reassurance. */
+.dns-review aside.dns-review-problems { background:#fdecec; border-left:6px solid #cb0000; }
+.dns-review aside.dns-review-problems > i { color:#cb0000; font-size:18px; margin-top:2px; }
+.dns-review aside.dns-review-problems b { display:block; margin-bottom:6px; color:#cb0000; }
+.dns-review aside.dns-review-problems ul { margin:0; padding-left:18px; }
+.dns-review aside.dns-review-problems li { margin:3px 0; }
+
+/* Buy X Get Y giveaway picker: search-and-pin, because the catalogue is far too big to list. */
+.dns-reward-picker { border:2px solid #111; background:#fffceb; padding:16px; }
+.dns-reward-picker > b { display:block; font-size:12px; margin-bottom:10px; }
+.dns-reward-search { display:flex; gap:10px; }
+.dns-reward-search input { flex:1; border:2px solid #111; padding:10px; }
+.dns-reward-search button { flex:none; }
+.dns-reward-chosen { display:flex; justify-content:space-between; align-items:center; gap:12px; background:#fff; border:2px solid #111; padding:12px; font-weight:800; }
+.dns-reward-chosen button { border:2px solid #111; background:#ffe600; font-weight:900; padding:6px 12px; }
+.dns-reward-hit { display:block; width:100%; text-align:left; background:#fff; border:0; border-bottom:1px solid #ccc; padding:10px 12px; }
+.dns-reward-hit:hover { background:#ffe600; }
+.dns-reward-hit small { display:block; color:#706b5c; font-weight:400; }
+.dns-reward-hint { margin:10px 0 0; color:#cb0000; font-size:12px; font-weight:700; }
+
+/* Edit is the primary thing an operator does to an existing campaign, so it lives on the
+   library row rather than only behind the detail page. */
+.dns-row-actions { white-space:nowrap; text-align:right; }
+.dns-row-actions button { border:2px solid #111; background:#fff; font-weight:900; padding:7px 12px; margin-left:8px; }
+.dns-row-actions button:hover { background:#ffe600; }
+.dns-row-actions .dns-primary { background:#cb0000; color:#fff; box-shadow:none; }
+.dns-row-remove { border:1px solid #cb0000; background:#fff; color:#cb0000; font-weight:900; line-height:1; padding:5px 9px; }
+.dns-row-remove:hover:not([disabled]) { background:#cb0000; color:#fff; }
+.dns-row-remove[disabled] { opacity:.35; }
+.dns-detail-metrics b.small em { font-style:normal; color:#706b5c; font-size:11px; }
+
+.dns-detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.dns-detail-grid dl { display:grid; grid-template-columns:160px 1fr; padding:20px; margin:0; }
+.dns-detail-grid dt,.dns-detail-grid dd { padding:9px; border-bottom:1px solid #ccc; }
+.dns-selector-row { display:flex; justify-content:space-between; padding:14px 20px; border-top:1px solid #aaa; }
+.dns-selector-row small { display:block; color:#706b5c; }
+.dns-timeline > div { display:grid; grid-template-columns:18px 1fr; gap:12px; padding:14px 20px; }
+.dns-timeline > div > i { width:12px; height:12px; background:#ffe600; border:2px solid #111; border-radius:50%; margin-top:4px; }
+.dns-timeline p { margin:3px 0; }.dns-timeline small { color:#706b5c; }
+.dns-management-grid { display:grid; grid-template-columns:1fr 420px; gap:20px; }
+.dns-group-list article,.dns-group-editor,.dns-selector-cards article { background:#fff; border:2px solid #111; box-shadow:4px 4px #aaa; padding:18px; margin-bottom:15px; }
+.dns-group-list header { display:flex; justify-content:space-between; }
+.dns-group-list h3,.dns-group-editor h3 { font:25px Impact,sans-serif; text-transform:uppercase; margin:0; }
+.dns-group-list header button { border:2px solid #111; background:#ffe600; font-weight:900; padding:7px 12px; }
+.dns-group-list p { color:#706b5c; }
+.dns-group-editor { position:sticky; top:18px; height:fit-content; }
+.dns-group-editor > span { font-size:10px; color:#cb0000; font-weight:900; letter-spacing:.12em; }
+.dns-group-editor > label { display:block; margin:16px 0; font-size:12px; font-weight:900; }
+.dns-group-editor > label input { display:block; width:100%; border:2px solid #111; padding:10px; margin-top:5px; }
+.dns-group-editor > div { height:350px; overflow:auto; border:2px solid #111; margin-bottom:16px; }
+.dns-group-editor > div label { display:flex; gap:10px; padding:9px; border-bottom:1px solid #ccc; }
+.dns-selector-cards { display:grid; grid-template-columns:repeat(3,minmax(260px,1fr)); gap:16px; }
+.dns-selector-cards article { margin:0; }.dns-selector-cards header { display:flex; align-items:center; gap:10px; }
+.dns-selector-cards header button { border:0; background:transparent; font-weight:900; text-align:left; }
+.dns-selector-cards h3 { font:40px Impact,sans-serif; margin:20px 0 4px; }
+.dns-selector-cards h3 small { font:700 11px Inter,sans-serif; }
+.dns-selector-cards article > div { display:flex; gap:6px; flex-wrap:wrap; }
+.dns-selector-cards article > div span { background:#f1f1ed; border:1px solid #aaa; padding:4px 7px; font-size:10px; }
+@media(max-width:900px){.dns-detail-grid,.dns-management-grid{grid-template-columns:1fr}.dns-selector-cards{grid-template-columns:1fr 1fr}.dns-group-editor{position:static}.dns-detail-metrics{grid-template-columns:1fr 1fr}}
+
+/* Till picker grouped by store: one shop runs several tills, so a flat list of 65 POS configs
+   reads as 65 shops. The store row toggles all of its tills at once. */
+.dns-store-head { background:#fffceb; font-weight:900; border-top:2px solid #111 !important; }
+.dns-store-head small { margin-left:auto; color:#706b5c; font-weight:700; }
+.dns-till-row { padding-left:28px !important; }
+.dns-coverage em { display:block; font-style:normal; font-size:11px; font-weight:700; color:#706b5c; margin-top:2px; }
+.dns-row-open { cursor:pointer; }
+.dns-table-wrap tr.dns-row-open:hover { background:#fffceb; }

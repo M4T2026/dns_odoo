@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ir_cron_dns_promotion_state" model="ir.cron">
+        <field name="name">Odoo Promotions: update scheduled states</field>
+        <field name="model_id" ref="model_dns_pos_promotion"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_update_states()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>
+

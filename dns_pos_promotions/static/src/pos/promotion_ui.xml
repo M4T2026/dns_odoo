@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="dns_pos_promotions.PromoCodeButton">
+        <button class="control-button btn btn-light rounded-0 fw-bolder" t-on-click="() => this.clickDnsCoupon()">
+            <i class="fa fa-ticket me-1"/> Promo code
+        </button>
+    </t>
+    <t t-name="dns_pos_promotions.Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension">
+        <xpath expr="//li" position="inside">
+            <div t-if="line.dnsPromotionName" class="dns-promotion-chip" title="Applied promotion">
+                <i class="fa fa-tag"/><span t-esc="line.dnsPromotionName"/>
+                <span t-if="line.dnsSavedAmount" class="dns-promotion-saving">Saved <t t-esc="env.utils.formatCurrency(line.dnsSavedAmount)"/></span>
+            </div>
+        </xpath>
+        <!-- Core prints the raw ratio it was handed ("With a 40.080160320641276% discount").
+             A promotion line states what the offer actually is instead; a discount the cashier
+             keyed in by hand still reads the core way.
+             Anchored on the t-esc rather than the t-if: the condition is a long expression
+             containing quotes, and matching it literally breaks the moment core reformats it. -->
+        <xpath expr="//li[em/t[@t-esc='line.discount']]" position="replace">
+            <li t-if="line.price !== 0 and line.dnsDiscountLabel">
+                <t t-esc="line.price_without_discount"/> With <em><t t-esc="line.dnsDiscountLabel"/></em>
+            </li>
+            <li t-if="line.price !== 0 and line.discount and line.discount !== '0' and !line.dnsDiscountLabel">
+                <t t-esc="line.price_without_discount"/> With a <em><t t-esc="line.discount"/>% </em> discount
+            </li>
+        </xpath>
+    </t>
+</templates>
