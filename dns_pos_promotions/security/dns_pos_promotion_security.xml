@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_dns_promotion_user" model="res.groups">
+        <field name="name">Odoo Promotion Viewer</field>
+        <field name="category_id" ref="base.module_category_sales_point_of_sale"/>
+        <field name="implied_ids" eval="[(4, ref('point_of_sale.group_pos_user'))]"/>
+    </record>
+    <!-- Store back office: builds and edits promotions, but only on the tills in their own Allowed
+         POS. Deliberately not a POS manager, which would lift the pos.config rule and show every
+         till. No store groups and no Analysis: those span the whole network. -->
+    <record id="group_dns_promotion_backoffice" model="res.groups">
+        <field name="name">Odoo Promotion Backoffice</field>
+        <field name="category_id" ref="base.module_category_sales_point_of_sale"/>
+        <field name="implied_ids" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_user'))]"/>
+    </record>
+    <record id="group_dns_promotion_manager" model="res.groups">
+        <field name="name">Odoo Promotion Manager</field>
+        <field name="category_id" ref="base.module_category_sales_point_of_sale"/>
+        <field name="implied_ids" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_backoffice')), (4, ref('point_of_sale.group_pos_manager'))]"/>
+    </record>
+
+    <record id="rule_dns_promotion_viewer" model="ir.rule">
+        <field name="name">Promotion viewers see validated promotions on their Allowed POS</field>
+        <field name="model_id" ref="model_dns_pos_promotion"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_user'))]"/>
+        <!-- Allowed POS is res.users.pos_config_ids (ct_pos_user_restriction). Matched against
+             the store scope materialized at validation, which already flattens store groups and
+             All Stores into tills; every state a viewer may see has been validated. -->
+        <field name="domain_force">[('state', 'in', ['active', 'scheduled', 'ended']), ('store_scope_ids.config_id', 'in', user.pos_config_ids.ids)]</field>
+        <field name="perm_read" eval="True"/><field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/><field name="perm_unlink" eval="False"/>
+    </record>
+    <!-- Every till the promotion names is one of the user's Allowed POS; no All Stores, no store
+         groups. Only covers editing: back office users still read network-wide promotions on their
+         tills through the viewer rule. Rules are not rechecked after a write, so
+         dns.pos.promotion._dns_check_backoffice_scope refuses a write that widens the coverage. -->
+    <record id="rule_dns_promotion_backoffice" model="ir.rule">
+        <field name="name">Promotion back office edits promotions limited to their Allowed POS</field>
+        <field name="model_id" ref="model_dns_pos_promotion"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_backoffice'))]"/>
+        <field name="domain_force">[('all_stores', '=', False), ('store_group_ids', '=', False), ('pos_config_ids', '!=', False), ('pos_config_ids', 'not any', [('id', 'not in', user.pos_config_ids.ids)])]</field>
+    </record>
+    <!-- Validation rewrites these rows as the editing user; without a rule a back office user
+         could drop any promotion to draft by writing one of its selectors. Managers inherit these
+         rules through the back office group, so they get a catch-all below. -->
+    <record id="rule_dns_selector_backoffice" model="ir.rule">
+        <field name="name">Promotion back office changes selectors only on their own promotions</field>
+        <field name="model_id" ref="model_dns_promotion_selector"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_backoffice'))]"/>
+        <field name="domain_force">[('promotion_id', 'any', [('all_stores', '=', False), ('store_group_ids', '=', False), ('pos_config_ids', '!=', False), ('pos_config_ids', 'not any', [('id', 'not in', user.pos_config_ids.ids)])])]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_dns_product_scope_backoffice" model="ir.rule">
+        <field name="name">Promotion back office changes resolved products only on their own promotions</field>
+        <field name="model_id" ref="model_dns_promotion_product_scope"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_backoffice'))]"/>
+        <field name="domain_force">[('promotion_id', 'any', [('all_stores', '=', False), ('store_group_ids', '=', False), ('pos_config_ids', '!=', False), ('pos_config_ids', 'not any', [('id', 'not in', user.pos_config_ids.ids)])])]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_dns_store_scope_backoffice" model="ir.rule">
+        <field name="name">Promotion back office changes store scope only on their own promotions</field>
+        <field name="model_id" ref="model_dns_promotion_store_scope"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_backoffice'))]"/>
+        <field name="domain_force">[('promotion_id', 'any', [('all_stores', '=', False), ('store_group_ids', '=', False), ('pos_config_ids', '!=', False), ('pos_config_ids', 'not any', [('id', 'not in', user.pos_config_ids.ids)])])]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_dns_conflict_backoffice" model="ir.rule">
+        <field name="name">Promotion back office changes conflicts only on their own promotions</field>
+        <field name="model_id" ref="model_dns_promotion_conflict"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_backoffice'))]"/>
+        <field name="domain_force">[('promotion_id', 'any', [('all_stores', '=', False), ('store_group_ids', '=', False), ('pos_config_ids', '!=', False), ('pos_config_ids', 'not any', [('id', 'not in', user.pos_config_ids.ids)])])]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_dns_promotion_manager" model="ir.rule">
+        <field name="name">Promotion managers see all promotions</field>
+        <field name="model_id" ref="model_dns_pos_promotion"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_dns_selector_manager" model="ir.rule">
+        <field name="name">Promotion managers change all selectors</field>
+        <field name="model_id" ref="model_dns_promotion_selector"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_dns_product_scope_manager" model="ir.rule">
+        <field name="name">Promotion managers change all resolved products</field>
+        <field name="model_id" ref="model_dns_promotion_product_scope"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_dns_store_scope_manager" model="ir.rule">
+        <field name="name">Promotion managers change all store scope</field>
+        <field name="model_id" ref="model_dns_promotion_store_scope"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_dns_conflict_manager" model="ir.rule">
+        <field name="name">Promotion managers change all conflicts</field>
+        <field name="model_id" ref="model_dns_promotion_conflict"/>
+        <field name="groups" eval="[(4, ref('dns_pos_promotions.group_dns_promotion_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+</odoo>
