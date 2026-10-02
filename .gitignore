@@ -1,5 +1,3 @@
 __pycache__/
 *.pyc
-.claude/
-.vscode/
-.idea/
+.DS_Store
