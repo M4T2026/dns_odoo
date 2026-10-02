@@ -6,8 +6,7 @@
     "license": "LGPL-3",
     "author": "mate4tech",
     "maintainer": "mate4tech",
-    "support": "sales@mate4tech.com.au",
-    "website": "https://www.mate4tech.com.au",
+    "support": "COMPANY_EMAIL_HERE",
     "price": 200.00,
     "currency": "USD",
     "depends": [
