@@ -4,7 +4,7 @@
     "version": "17.0.2.2.1",
     "category": "Point of Sale",
     "license": "LGPL-3",
-    "author": "DNS",
+    "author": "mate4tech",
     "depends": [
         "point_of_sale",
         "mail",
