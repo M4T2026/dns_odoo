@@ -4,11 +4,7 @@
     "version": "17.0.2.2.1",
     "category": "Point of Sale",
     "license": "LGPL-3",
-    "author": "mate4tech",
-    "maintainer": "mate4tech",
-    "support": "COMPANY_EMAIL_HERE",
-    "price": 200.00,
-    "currency": "USD",
+    "author": "DNS",
     "depends": [
         "point_of_sale",
         "mail",
