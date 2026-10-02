@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//home/mudasir/Desktop/odoo-17-ent/omgosh/shopify_ept/**)",
-      "Bash(sed -n '174,178p;/def shopify_create_order_data_queues/,/^    def /p' models/order_data_queue_ept.py)"
-    ]
-  }
-}

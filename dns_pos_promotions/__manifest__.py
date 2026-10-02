@@ -1,10 +1,14 @@
 {
     "name": "Odoo POS Promotions",
     "summary": "Scalable store-aware promotions for Odoo Point of Sale",
-    "version": "17.0.2.2.0",
+    "version": "17.0.2.2.1",
     "category": "Point of Sale",
     "license": "LGPL-3",
-    "author": "DNS",
+    "author": "mate4tech",
+    "maintainer": "mate4tech",
+    "support": "COMPANY_EMAIL_HERE",
+    "price": 200.00,
+    "currency": "USD",
     "depends": [
         "point_of_sale",
         "mail",
@@ -38,6 +42,7 @@
             "dns_pos_promotions/static/tests/**/*.js",
         ],
     },
+    "images": ["static/description/banner.png"],
     "installable": True,
     "application": True,
 }
