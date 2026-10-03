@@ -4,7 +4,7 @@
     "version": "17.0.2.2.1",
     "category": "Point of Sale",
     "license": "LGPL-3",
-    "author": "mate4tech",
+    "author": "Mate4tech",
     "depends": [
         "point_of_sale",
         "mail",
